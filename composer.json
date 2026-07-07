@@ -1,6 +1,6 @@
 {
     "name": "vampirevape/vv-whatsapp-assistant",
-    "description": "WhatsApp Business assistant integration for Vampire Vape storefront support.",
+    "description": "FlowHunt WhatsApp chat button integration for Vampire Vape storefront support.",
     "type": "shopware-platform-plugin",
     "license": "proprietary",
     "autoload": {
