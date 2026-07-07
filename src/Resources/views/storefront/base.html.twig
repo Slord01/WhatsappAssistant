@@ -1,0 +1,69 @@
+{% sw_extends '@Storefront/storefront/base.html.twig' %}
+
+{% block base_body_script %}
+    {{ parent() }}
+
+    {% set vvWhatsAppEnabled = config('VvWhatsAppAssistant.config.enabled') %}
+    {% set vvWhatsAppPhone = config('VvWhatsAppAssistant.config.whatsappPhoneNumber') %}
+
+    {% if vvWhatsAppEnabled and vvWhatsAppPhone %}
+        {% set vvWhatsAppText = 'Hallo, ich habe eine Frage an den Vampire Vape Support.' %}
+        <a class="vv-whatsapp-assistant-button"
+           href="https://wa.me/{{ vvWhatsAppPhone|replace({' ': '', '+': '', '-': '', '/': '', '(': '', ')': ''}) }}?text={{ vvWhatsAppText|url_encode }}"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="Vampire Vape Support per WhatsApp kontaktieren">
+            <span class="vv-whatsapp-assistant-button__icon" aria-hidden="true">WA</span>
+            <span class="vv-whatsapp-assistant-button__text">WhatsApp</span>
+        </a>
+
+        <style>
+            .vv-whatsapp-assistant-button {
+                position: fixed;
+                right: 18px;
+                bottom: 18px;
+                z-index: 1040;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                min-height: 48px;
+                padding: 10px 16px;
+                border-radius: 999px;
+                background: #25d366;
+                color: #ffffff;
+                font-size: 15px;
+                font-weight: 700;
+                line-height: 1;
+                text-decoration: none;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+            }
+
+            .vv-whatsapp-assistant-button:hover,
+            .vv-whatsapp-assistant-button:focus {
+                color: #ffffff;
+                text-decoration: none;
+                background: #1fbd5b;
+            }
+
+            .vv-whatsapp-assistant-button__icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 28px;
+                height: 28px;
+                border: 2px solid currentColor;
+                border-radius: 50%;
+                font-size: 10px;
+                letter-spacing: 0;
+            }
+
+            @media (max-width: 575.98px) {
+                .vv-whatsapp-assistant-button {
+                    right: 12px;
+                    bottom: 12px;
+                    padding: 10px 12px;
+                }
+            }
+        </style>
+    {% endif %}
+{% endblock %}

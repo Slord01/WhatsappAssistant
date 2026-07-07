@@ -1,0 +1,22 @@
+{
+    "name": "vampirevape/vv-whatsapp-assistant",
+    "description": "WhatsApp Business assistant integration for Vampire Vape storefront support.",
+    "type": "shopware-platform-plugin",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "VvWhatsAppAssistant\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "VvWhatsAppAssistant\\VvWhatsAppAssistant",
+        "label": {
+            "de-DE": "Vampire Vape WhatsApp Assistant",
+            "en-GB": "Vampire Vape WhatsApp Assistant"
+        }
+    },
+    "require": {
+        "shopware/core": "~6.5.0",
+        "shopware/storefront": "~6.5.0"
+    }
+}
