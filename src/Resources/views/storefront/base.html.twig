@@ -10,8 +10,10 @@
     {% set vvSelectedSalesChannels = config(vvConfigPrefix ~ 'salesChannelIds') ?: [] %}
     {% set vvCurrentSalesChannelId = context.salesChannelId|default(context.salesChannel.id|default(null)) %}
     {% set vvEnabledForSalesChannel = vvSelectedSalesChannels is empty or vvCurrentSalesChannelId is empty or vvCurrentSalesChannelId in vvSelectedSalesChannels %}
+    {% set vvCurrentPath = app.request.pathInfo|default('') %}
+    {% set vvHiddenOnCheckout = '/checkout' in vvCurrentPath %}
 
-    {% if vvWhatsAppEnabled and vvEnabledForSalesChannel %}
+    {% if vvWhatsAppEnabled and vvEnabledForSalesChannel and not vvHiddenOnCheckout %}
         {% set vvButtonAriaLabel = config(vvConfigPrefix ~ 'buttonAriaLabel') ?: 'WhatsApp Chat oeffnen' %}
         {% set vvBottomOffset = config(vvConfigPrefix ~ 'bottomOffset') ?: 96 %}
 
@@ -71,6 +73,10 @@
                 display: block;
             }
 
+            .vv-whatsapp-assistant-button.is-hidden {
+                display: none;
+            }
+
             @media (max-width: 575.98px) {
                 .vv-whatsapp-assistant-button {
                     right: 12px;
@@ -95,6 +101,13 @@
 
                 const configuredSelector = button.dataset.liveDeskSelector || '';
                 const whatsappUrl = button.dataset.whatsappUrl || '';
+                const hiddenSelectors = [
+                    '.offcanvas.show',
+                    '.offcanvas-cart.show',
+                    '.cart-offcanvas.show',
+                    '.modal.show',
+                    '.modal-backdrop.show'
+                ];
 
                 const findLiveDeskButton = () => {
                     if (!configuredSelector) {
@@ -125,6 +138,21 @@
                     if (whatsappUrl) {
                         window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
                     }
+                });
+
+                const updateVisibility = () => {
+                    const shouldHide = hiddenSelectors.some((selector) => document.querySelector(selector));
+                    button.classList.toggle('is-hidden', shouldHide);
+                };
+
+                updateVisibility();
+
+                const observer = new MutationObserver(updateVisibility);
+                observer.observe(document.body, {
+                    attributes: true,
+                    childList: true,
+                    subtree: true,
+                    attributeFilter: ['class', 'style']
                 });
             })();
         </script>
