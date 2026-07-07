@@ -6,7 +6,7 @@
     {% set vvConfigPrefix = 'VvWhatsAppAssistant.config.' %}
     {% set vvWhatsAppEnabled = config(vvConfigPrefix ~ 'enabled') %}
     {% set vvLiveDeskButtonSelector = config(vvConfigPrefix ~ 'liveDeskButtonSelector') %}
-    {% set vvFallbackChatUrl = config(vvConfigPrefix ~ 'fallbackChatUrl') %}
+    {% set vvWhatsAppUrl = config(vvConfigPrefix ~ 'whatsappUrl') ?: 'https://wa.me/4921317399361' %}
     {% set vvSelectedSalesChannels = config(vvConfigPrefix ~ 'salesChannelIds') ?: [] %}
     {% set vvCurrentSalesChannelId = context.salesChannel.id|default(null) %}
     {% set vvEnabledForSalesChannel = vvSelectedSalesChannels is empty or vvCurrentSalesChannelId in vvSelectedSalesChannels %}
@@ -19,7 +19,7 @@
                 type="button"
                 data-vv-live-desk-trigger
                 data-live-desk-selector="{{ vvLiveDeskButtonSelector|default('')|e('html_attr') }}"
-                data-fallback-chat-url="{{ vvFallbackChatUrl|default('')|e('html_attr') }}"
+                data-whatsapp-url="{{ vvWhatsAppUrl|e('html_attr') }}"
                 aria-label="{{ vvButtonAriaLabel }}"
                 style="--vv-whatsapp-assistant-bottom: {{ vvBottomOffset|abs }}px;">
             <svg class="vv-whatsapp-assistant-button__icon"
@@ -93,39 +93,22 @@
                     return;
                 }
 
-                const defaultSelectors = [
-                    '.liveagent-button',
-                    '.LiveAgentChatButton',
-                    '.LiveAgentButton',
-                    '[id^="liveagent_button"]',
-                    '[class*="liveagent"]',
-                    '[class*="LiveAgent"]',
-                    '[class*="ladesk"]',
-                    '[class*="chat-button"]'
-                ];
-
                 const configuredSelector = button.dataset.liveDeskSelector || '';
-                const fallbackChatUrl = button.dataset.fallbackChatUrl || '';
-
-                const getSelectors = () => {
-                    if (!configuredSelector) {
-                        return defaultSelectors;
-                    }
-
-                    return [configuredSelector, ...defaultSelectors];
-                };
+                const whatsappUrl = button.dataset.whatsappUrl || '';
 
                 const findLiveDeskButton = () => {
-                    for (const selector of getSelectors()) {
-                        try {
-                            const target = document.querySelector(selector);
+                    if (!configuredSelector) {
+                        return null;
+                    }
 
-                            if (target && target !== button) {
-                                return target;
-                            }
-                        } catch (error) {
-                            continue;
+                    try {
+                        const target = document.querySelector(configuredSelector);
+
+                        if (target && target !== button) {
+                            return target;
                         }
+                    } catch (error) {
+                        return null;
                     }
 
                     return null;
@@ -139,8 +122,8 @@
                         return;
                     }
 
-                    if (fallbackChatUrl) {
-                        window.open(fallbackChatUrl, '_blank', 'noopener,noreferrer');
+                    if (whatsappUrl) {
+                        window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
                     }
                 });
             })();

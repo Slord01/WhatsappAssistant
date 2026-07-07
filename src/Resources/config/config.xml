@@ -26,17 +26,18 @@
             <label lang="de-DE">LiveDesk Button CSS Selector</label>
             <label lang="en-GB">LiveDesk button CSS selector</label>
             <placeholder>.liveagent-button, #chat-button</placeholder>
-            <helpText lang="de-DE">Der WhatsApp Button klickt dieses Element an, damit der bestehende LiveDesk Chat mit FlowHunt Agent geoeffnet wird.</helpText>
-            <helpText lang="en-GB">The WhatsApp button clicks this element to open the existing LiveDesk chat with the FlowHunt agent.</helpText>
+            <helpText lang="de-DE">Optional. Wenn gesetzt, klickt der WhatsApp Button dieses Element an, damit der bestehende LiveDesk Chat mit FlowHunt Agent geoeffnet wird.</helpText>
+            <helpText lang="en-GB">Optional. If set, the WhatsApp button clicks this element to open the existing LiveDesk chat with the FlowHunt agent.</helpText>
         </input-field>
 
         <input-field type="text">
-            <name>fallbackChatUrl</name>
-            <label lang="de-DE">Fallback Chat URL</label>
-            <label lang="en-GB">Fallback chat URL</label>
-            <placeholder>https://...</placeholder>
-            <helpText lang="de-DE">Optional. Wird nur genutzt, wenn kein LiveDesk Button gefunden wird.</helpText>
-            <helpText lang="en-GB">Optional. Used only when no LiveDesk button can be found.</helpText>
+            <name>whatsappUrl</name>
+            <label lang="de-DE">WhatsApp URL</label>
+            <label lang="en-GB">WhatsApp URL</label>
+            <placeholder>https://wa.me/4921317399361</placeholder>
+            <defaultValue>https://wa.me/4921317399361</defaultValue>
+            <helpText lang="de-DE">Wird genutzt, wenn kein LiveDesk Selector eingetragen ist oder kein LiveDesk Button gefunden wird.</helpText>
+            <helpText lang="en-GB">Used when no LiveDesk selector is configured or no LiveDesk button can be found.</helpText>
         </input-field>
 
         <input-field type="text">
