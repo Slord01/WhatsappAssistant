@@ -5,23 +5,23 @@
 
     {% set vvConfigPrefix = 'VvWhatsAppAssistant.config.' %}
     {% set vvWhatsAppEnabled = config(vvConfigPrefix ~ 'enabled') %}
-    {% set vvFlowhuntChatUrl = config(vvConfigPrefix ~ 'flowhuntChatUrl') %}
+    {% set vvLiveDeskButtonSelector = config(vvConfigPrefix ~ 'liveDeskButtonSelector') %}
+    {% set vvFallbackChatUrl = config(vvConfigPrefix ~ 'fallbackChatUrl') %}
     {% set vvSelectedSalesChannels = config(vvConfigPrefix ~ 'salesChannelIds') ?: [] %}
     {% set vvCurrentSalesChannelId = context.salesChannel.id|default(null) %}
     {% set vvEnabledForSalesChannel = vvSelectedSalesChannels is empty or vvCurrentSalesChannelId in vvSelectedSalesChannels %}
 
-    {% if vvWhatsAppEnabled and vvFlowhuntChatUrl and vvEnabledForSalesChannel %}
-        {% set vvButtonAriaLabel = config(vvConfigPrefix ~ 'buttonAriaLabel') ?: 'WhatsApp Chat öffnen' %}
+    {% if vvWhatsAppEnabled and vvEnabledForSalesChannel %}
+        {% set vvButtonAriaLabel = config(vvConfigPrefix ~ 'buttonAriaLabel') ?: 'WhatsApp Chat oeffnen' %}
         {% set vvBottomOffset = config(vvConfigPrefix ~ 'bottomOffset') ?: 96 %}
 
-        <div class="vv-whatsapp-assistant"
-             data-vv-flowhunt-chat
-             style="--vv-whatsapp-assistant-bottom: {{ vvBottomOffset|abs }}px;">
         <button class="vv-whatsapp-assistant-button"
                 type="button"
+                data-vv-live-desk-trigger
+                data-live-desk-selector="{{ vvLiveDeskButtonSelector|default('')|e('html_attr') }}"
+                data-fallback-chat-url="{{ vvFallbackChatUrl|default('')|e('html_attr') }}"
                 aria-label="{{ vvButtonAriaLabel }}"
-                aria-expanded="false"
-                aria-controls="vv-whatsapp-assistant-panel">
+                style="--vv-whatsapp-assistant-bottom: {{ vvBottomOffset|abs }}px;">
             <svg class="vv-whatsapp-assistant-button__icon"
                  xmlns="http://www.w3.org/2000/svg"
                  viewBox="0 0 32 32"
@@ -31,41 +31,12 @@
             </svg>
         </button>
 
-        <section class="vv-whatsapp-assistant-panel"
-                 id="vv-whatsapp-assistant-panel"
-                 aria-label="FlowHunt WhatsApp Chat"
-                 hidden>
-            <div class="vv-whatsapp-assistant-panel__header">
-                <span>WhatsApp Chat</span>
-                <button class="vv-whatsapp-assistant-panel__close"
-                        type="button"
-                        aria-label="Chat schließen">
-                    &times;
-                </button>
-            </div>
-            <iframe class="vv-whatsapp-assistant-panel__frame"
-                    src="{{ vvFlowhuntChatUrl }}"
-                    title="FlowHunt WhatsApp Chat"
-                    loading="lazy"
-                    referrerpolicy="strict-origin-when-cross-origin"></iframe>
-            <a class="vv-whatsapp-assistant-panel__fallback"
-               href="{{ vvFlowhuntChatUrl }}"
-               target="_blank"
-               rel="noopener noreferrer">
-                Chat in neuem Fenster öffnen
-            </a>
-        </section>
-        </div>
-
         <style>
-            .vv-whatsapp-assistant {
+            .vv-whatsapp-assistant-button {
                 position: fixed;
                 right: 18px;
                 bottom: var(--vv-whatsapp-assistant-bottom, 96px);
                 z-index: 2147483000;
-            }
-
-            .vv-whatsapp-assistant-button {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
@@ -85,7 +56,6 @@
             .vv-whatsapp-assistant-button:focus {
                 color: #ffffff;
                 background: #1fbd5b;
-                text-decoration: none;
                 transform: translateY(-1px);
                 box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
             }
@@ -101,79 +71,9 @@
                 display: block;
             }
 
-            .vv-whatsapp-assistant-panel {
-                position: absolute;
-                right: 0;
-                bottom: 66px;
-                width: min(380px, calc(100vw - 24px));
-                height: min(620px, calc(100vh - var(--vv-whatsapp-assistant-bottom, 96px) - 88px));
-                min-height: 420px;
-                overflow: hidden;
-                border: 1px solid rgba(0, 0, 0, 0.12);
-                border-radius: 8px;
-                background: #ffffff;
-                box-shadow: 0 16px 44px rgba(0, 0, 0, 0.24);
-            }
-
-            .vv-whatsapp-assistant-panel__header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                height: 46px;
-                padding: 0 12px 0 16px;
-                background: #128c7e;
-                color: #ffffff;
-                font-size: 15px;
-                font-weight: 700;
-            }
-
-            .vv-whatsapp-assistant-panel__close {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                width: 34px;
-                height: 34px;
-                padding: 0;
-                border: 0;
-                border-radius: 50%;
-                background: transparent;
-                color: #ffffff;
-                cursor: pointer;
-                font-size: 24px;
-                line-height: 1;
-            }
-
-            .vv-whatsapp-assistant-panel__close:hover,
-            .vv-whatsapp-assistant-panel__close:focus {
-                background: rgba(255, 255, 255, 0.14);
-            }
-
-            .vv-whatsapp-assistant-panel__frame {
-                display: block;
-                width: 100%;
-                height: calc(100% - 84px);
-                border: 0;
-            }
-
-            .vv-whatsapp-assistant-panel__fallback {
-                display: block;
-                margin: 8px 12px;
-                padding: 10px 12px;
-                border-radius: 6px;
-                background: #25d366;
-                color: #ffffff;
-                font-size: 14px;
-                font-weight: 700;
-                text-align: center;
-                text-decoration: none;
-            }
-
             @media (max-width: 575.98px) {
-                .vv-whatsapp-assistant {
-                    right: 12px;
-                }
-
                 .vv-whatsapp-assistant-button {
+                    right: 12px;
                     width: 50px;
                     height: 50px;
                 }
@@ -182,49 +82,65 @@
                     width: 30px;
                     height: 30px;
                 }
-
-                .vv-whatsapp-assistant-panel {
-                    bottom: 62px;
-                    width: calc(100vw - 24px);
-                    height: min(620px, calc(100vh - var(--vv-whatsapp-assistant-bottom, 96px) - 82px));
-                    min-height: 360px;
-                }
             }
         </style>
 
         <script>
             (() => {
-                const root = document.querySelector('[data-vv-flowhunt-chat]');
+                const button = document.querySelector('[data-vv-live-desk-trigger]');
 
-                if (!root) {
+                if (!button) {
                     return;
                 }
 
-                const button = root.querySelector('.vv-whatsapp-assistant-button');
-                const panel = root.querySelector('.vv-whatsapp-assistant-panel');
-                const close = root.querySelector('.vv-whatsapp-assistant-panel__close');
+                const defaultSelectors = [
+                    '.liveagent-button',
+                    '.LiveAgentChatButton',
+                    '.LiveAgentButton',
+                    '[id^="liveagent_button"]',
+                    '[class*="liveagent"]',
+                    '[class*="LiveAgent"]',
+                    '[class*="ladesk"]',
+                    '[class*="chat-button"]'
+                ];
 
-                if (!button || !panel || !close) {
-                    return;
-                }
+                const configuredSelector = button.dataset.liveDeskSelector || '';
+                const fallbackChatUrl = button.dataset.fallbackChatUrl || '';
 
-                const setOpen = (isOpen) => {
-                    panel.hidden = !isOpen;
-                    button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                const getSelectors = () => {
+                    if (!configuredSelector) {
+                        return defaultSelectors;
+                    }
+
+                    return [configuredSelector, ...defaultSelectors];
+                };
+
+                const findLiveDeskButton = () => {
+                    for (const selector of getSelectors()) {
+                        try {
+                            const target = document.querySelector(selector);
+
+                            if (target && target !== button) {
+                                return target;
+                            }
+                        } catch (error) {
+                            continue;
+                        }
+                    }
+
+                    return null;
                 };
 
                 button.addEventListener('click', () => {
-                    setOpen(panel.hidden);
-                });
+                    const liveDeskButton = findLiveDeskButton();
 
-                close.addEventListener('click', () => {
-                    setOpen(false);
-                    button.focus();
-                });
+                    if (liveDeskButton) {
+                        liveDeskButton.click();
+                        return;
+                    }
 
-                document.addEventListener('keydown', (event) => {
-                    if (event.key === 'Escape') {
-                        setOpen(false);
+                    if (fallbackChatUrl) {
+                        window.open(fallbackChatUrl, '_blank', 'noopener,noreferrer');
                     }
                 });
             })();

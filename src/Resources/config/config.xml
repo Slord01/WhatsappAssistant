@@ -7,32 +7,43 @@
 
         <input-field type="bool">
             <name>enabled</name>
-            <label lang="de-DE">FlowHunt WhatsApp Chat aktivieren</label>
-            <label lang="en-GB">Enable FlowHunt WhatsApp chat</label>
+            <label lang="de-DE">WhatsApp Chat Button aktivieren</label>
+            <label lang="en-GB">Enable WhatsApp chat button</label>
             <defaultValue>false</defaultValue>
         </input-field>
 
         <component name="sw-entity-multi-id-select">
             <name>salesChannelIds</name>
             <entity>sales_channel</entity>
-            <label lang="de-DE">Aktive Verkaufskanäle</label>
+            <label lang="de-DE">Aktive Verkaufskanaele</label>
             <label lang="en-GB">Active sales channels</label>
-            <helpText lang="de-DE">Wenn kein Verkaufskanal ausgewählt ist, wird der Button in allen Verkaufskanälen angezeigt.</helpText>
+            <helpText lang="de-DE">Wenn kein Verkaufskanal ausgewaehlt ist, wird der Button in allen Verkaufskanaelen angezeigt.</helpText>
             <helpText lang="en-GB">If no sales channel is selected, the button is shown in all sales channels.</helpText>
         </component>
 
         <input-field type="text">
-            <name>flowhuntChatUrl</name>
-            <label lang="de-DE">FlowHunt Chat URL</label>
-            <label lang="en-GB">FlowHunt chat URL</label>
+            <name>liveDeskButtonSelector</name>
+            <label lang="de-DE">LiveDesk Button CSS Selector</label>
+            <label lang="en-GB">LiveDesk button CSS selector</label>
+            <placeholder>.liveagent-button, #chat-button</placeholder>
+            <helpText lang="de-DE">Der WhatsApp Button klickt dieses Element an, damit der bestehende LiveDesk Chat mit FlowHunt Agent geoeffnet wird.</helpText>
+            <helpText lang="en-GB">The WhatsApp button clicks this element to open the existing LiveDesk chat with the FlowHunt agent.</helpText>
+        </input-field>
+
+        <input-field type="text">
+            <name>fallbackChatUrl</name>
+            <label lang="de-DE">Fallback Chat URL</label>
+            <label lang="en-GB">Fallback chat URL</label>
             <placeholder>https://...</placeholder>
+            <helpText lang="de-DE">Optional. Wird nur genutzt, wenn kein LiveDesk Button gefunden wird.</helpText>
+            <helpText lang="en-GB">Optional. Used only when no LiveDesk button can be found.</helpText>
         </input-field>
 
         <input-field type="text">
             <name>buttonAriaLabel</name>
-            <label lang="de-DE">Button-Beschriftung für Screenreader</label>
+            <label lang="de-DE">Button-Beschriftung fuer Screenreader</label>
             <label lang="en-GB">Button label for screen readers</label>
-            <defaultValue>WhatsApp Chat öffnen</defaultValue>
+            <defaultValue>WhatsApp Chat oeffnen</defaultValue>
         </input-field>
 
         <input-field type="int">
