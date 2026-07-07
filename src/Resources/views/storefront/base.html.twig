@@ -8,8 +8,8 @@
     {% set vvLiveDeskButtonSelector = config(vvConfigPrefix ~ 'liveDeskButtonSelector') %}
     {% set vvWhatsAppUrl = config(vvConfigPrefix ~ 'whatsappUrl') ?: 'https://wa.me/4921317399361' %}
     {% set vvSelectedSalesChannels = config(vvConfigPrefix ~ 'salesChannelIds') ?: [] %}
-    {% set vvCurrentSalesChannelId = context.salesChannel.id|default(null) %}
-    {% set vvEnabledForSalesChannel = vvSelectedSalesChannels is empty or vvCurrentSalesChannelId in vvSelectedSalesChannels %}
+    {% set vvCurrentSalesChannelId = context.salesChannelId|default(context.salesChannel.id|default(null)) %}
+    {% set vvEnabledForSalesChannel = vvSelectedSalesChannels is empty or vvCurrentSalesChannelId is empty or vvCurrentSalesChannelId in vvSelectedSalesChannels %}
 
     {% if vvWhatsAppEnabled and vvEnabledForSalesChannel %}
         {% set vvButtonAriaLabel = config(vvConfigPrefix ~ 'buttonAriaLabel') ?: 'WhatsApp Chat oeffnen' %}
