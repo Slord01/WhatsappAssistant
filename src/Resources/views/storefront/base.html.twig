@@ -51,7 +51,14 @@
                 color: #ffffff;
                 cursor: pointer;
                 box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
-                transition: transform 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
+                opacity: 1;
+                visibility: visible;
+                transition:
+                    opacity 0.18s ease,
+                    visibility 0.18s ease,
+                    transform 0.18s ease,
+                    background-color 0.16s ease,
+                    box-shadow 0.16s ease;
             }
 
             .vv-whatsapp-assistant-button:hover,
@@ -74,7 +81,10 @@
             }
 
             .vv-whatsapp-assistant-button.is-hidden {
-                display: none;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transform: translateY(10px) scale(0.96);
             }
 
             @media (max-width: 575.98px) {
@@ -102,11 +112,21 @@
                 const configuredSelector = button.dataset.liveDeskSelector || '';
                 const whatsappUrl = button.dataset.whatsappUrl || '';
                 const hiddenSelectors = [
-                    '.offcanvas.show',
-                    '.offcanvas-cart.show',
-                    '.cart-offcanvas.show',
-                    '.modal.show',
-                    '.modal-backdrop.show'
+                    '.offcanvas',
+                    '.offcanvas-cart',
+                    '.cart-offcanvas',
+                    '.js-offcanvas',
+                    '.modal',
+                    '.modal-backdrop',
+                    '.offcanvas-backdrop',
+                    '[class*="offcanvas"]',
+                    '[class*="Offcanvas"]'
+                ];
+                const hiddenBodyClasses = [
+                    'modal-open',
+                    'offcanvas-open',
+                    'is-offcanvas-open',
+                    'is-ctl-checkout'
                 ];
 
                 const findLiveDeskButton = () => {
@@ -140,12 +160,50 @@
                     }
                 });
 
+                const isVisibleOverlay = (element) => {
+                    if (!element || element === button) {
+                        return false;
+                    }
+
+                    const ariaHidden = element.getAttribute('aria-hidden');
+                    const ariaModal = element.getAttribute('aria-modal');
+                    const className = String(element.className || '');
+                    const isBackdrop = className.includes('backdrop');
+                    const looksOpen = /\b(show|open|is-open|is-active|active)\b/.test(className);
+                    const style = window.getComputedStyle(element);
+
+                    if (ariaHidden === 'true' || style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
+                        return false;
+                    }
+
+                    const rect = element.getBoundingClientRect();
+                    const hasSize = rect.width > 0 && rect.height > 0;
+
+                    return looksOpen || ariaModal === 'true' || (isBackdrop && hasSize);
+                };
+
                 const updateVisibility = () => {
-                    const shouldHide = hiddenSelectors.some((selector) => document.querySelector(selector));
+                    const bodyShouldHide = hiddenBodyClasses.some((className) => document.body.classList.contains(className));
+                    const overlayShouldHide = hiddenSelectors.some((selector) => {
+                        try {
+                            return Array.from(document.querySelectorAll(selector)).some(isVisibleOverlay);
+                        } catch (error) {
+                            return false;
+                        }
+                    });
+                    const shouldHide = bodyShouldHide || overlayShouldHide;
+
                     button.classList.toggle('is-hidden', shouldHide);
+                    button.setAttribute('aria-hidden', shouldHide ? 'true' : 'false');
+                    button.tabIndex = shouldHide ? -1 : 0;
                 };
 
                 updateVisibility();
+                window.addEventListener('resize', updateVisibility, { passive: true });
+                document.addEventListener('shown.bs.offcanvas', updateVisibility);
+                document.addEventListener('hidden.bs.offcanvas', updateVisibility);
+                document.addEventListener('shown.bs.modal', updateVisibility);
+                document.addEventListener('hidden.bs.modal', updateVisibility);
 
                 const observer = new MutationObserver(updateVisibility);
                 observer.observe(document.body, {
